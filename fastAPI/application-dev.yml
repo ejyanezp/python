@@ -1,0 +1,41 @@
+database:
+  local:
+    host: OPENLEGACY
+    port: 1521
+    schema: xe
+    username: OPENLEGACY
+    password: OPENLEGACY
+    pool-max-size: 5
+    connection-timeout: 30
+    query-timeout: 60000
+    driver-className: oracle+cx_oracle
+  PanamaSRV:
+    host: 192.168.251.96
+    port: 1521
+    schema: prolinux
+    username: srv_olegprobd
+    password: srv_olegprobd
+    pool-max-size: 5
+    connection-timeout: 30
+    query-timeout: 60000
+    driver-className: oracle+cx_oracle
+  UnicorpSRV:
+    host: 192.168.251.96
+    port: 1521
+    schema: prolinux
+    username: srv_olegprobd
+    password: srv_olegprobd
+    pool-max-size: 5
+    connection-timeout: 30
+    query-timeout: 60000
+    driver-className: oracle+cx_oracle
+  PlanintSRV:
+    host: 192.168.251.96
+    port: 1521
+    schema: prolinux
+    username: srv_olegprobd
+    password: srv_olegprobd
+    pool-max-size: 5
+    connection-timeout: 30
+    query-timeout: 60000
+    driver-className: oracle+cx_oracle
