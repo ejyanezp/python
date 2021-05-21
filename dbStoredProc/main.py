@@ -7,11 +7,12 @@ import base64
 def declare_parameters(request_map) -> str:
     key_list = list(request_map.keys())
     sql_params = ':' + key_list[0]
-    for key in key_list[1:]:   # Remove last element through python's array slicing
+    for key in key_list[1:]:  # Remove last element through python's array slicing
         sql_params += ', :' + key
     return sql_params
 
 
+cx_Oracle.init_oracle_client(lib_dir=r"C:\oraclexe\instantclient_19_11")
 engine = create_engine("oracle+cx_oracle://OPENLEGACY:OPENLEGACY@OPENLEGACY:1521/xe",
                        encoding='utf8', pool_size=5, pool_timeout=30)
 # SQL binding by name
@@ -39,7 +40,7 @@ with my_conn.cursor() as cursor:
 with my_conn.cursor() as cursor:
     request = {'P_FORMAT': 'JSON', 'P_COMPANY': 1, 'P_SOURCE': 'N5', 'P_COUNTRY': 1,
                'P_ACCOUNT_ID': 123, 'P_DATE_FROM': datetime.datetime(2021, 5, 1),
-               'P_DATE_TO': datetime.datetime(2021, 5, 30), 'P_TRACE_ID':  'ey', 'P_ITEMS_PER_PAGE': 10,
+               'P_DATE_TO': datetime.datetime(2021, 5, 30), 'P_TRACE_ID': 'ey', 'P_ITEMS_PER_PAGE': 10,
                'P_PAGE_NUMBER': 1, 'P_TOTAL_PAGES': cursor.var(int), 'P_TOTAL_RECORDS': cursor.var(int),
                'P_RESPONSE_CODE': cursor.var(int), 'P_MESSAGE': cursor.var(str)}
     pl_sql = f"begin TRAINING_PACKAGE.GET_CASH_TRANSACTIONS({declare_parameters(request)}); end;"
@@ -87,7 +88,7 @@ with my_conn.cursor() as cursor:
     objectType = my_conn.gettype("otr_cashTransactions")
     request4 = {'P_FORMAT': 'JSON', 'P_COMPANY': 1, 'P_SOURCE': 'N5', 'P_COUNTRY': 1,
                 'P_ACCOUNT_ID': 123, 'P_DATE_FROM': datetime.datetime(2021, 5, 1),
-                'P_DATE_TO': datetime.datetime(2021, 5, 30), 'P_TRACE_ID':  'ey', 'P_ITEMS_PER_PAGE': 10,
+                'P_DATE_TO': datetime.datetime(2021, 5, 30), 'P_TRACE_ID': 'ey', 'P_ITEMS_PER_PAGE': 10,
                 'P_PAGE_NUMBER': 1, 'P_TOTAL_PAGES': cursor.var(int), 'P_TOTAL_RECORDS': cursor.var(int),
                 'P_RESPONSE_CODE': cursor.var(int), 'P_MESSAGE': cursor.var(str),
                 'PTT_CASHTRANSACTIONS': cursor.arrayvar(objectType, 100)}
