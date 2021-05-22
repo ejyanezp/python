@@ -80,19 +80,6 @@ with my_conn.cursor() as cursor:
 
 
 # PL/SQL binding complex structures
-class CashTransactions(object):
-    def __init__(self):
-        self.tmoCodUsr: int = 1
-        self.tmoCodTra: int = 1
-        self.tmoTipoTra: str = 'C'
-        self.tmoSucCue: int = 1
-        self.tmoNumCue: int = 1
-        self.tmoTerminal: str = '123'
-        self.tmoFecha: datetime = datetime.datetime(2021, 5, 30)
-        self.empId: str = '1'
-        self.empNombre: str = 'eyanez'
-
-
 with my_conn.cursor() as cursor:
     collectionType = my_conn.gettype("ott_cashTransactionsList")
     request4 = {'P_FORMAT': 'JSON', 'P_COMPANY': 1, 'P_SOURCE': 'N5', 'P_COUNTRY': 1,
