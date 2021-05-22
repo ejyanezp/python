@@ -1,4 +1,5 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
+from sqlalchemy.pool import Pool
 import cx_Oracle
 import datetime
 import base64
@@ -10,6 +11,16 @@ def declare_parameters(request_map) -> str:
     for key in key_list[1:]:  # Remove last element through python's array slicing
         sql_params += ', :' + key
     return sql_params
+
+
+@event.listens_for(Pool, "connect")
+def set_call_timeout(self, conn: cx_Oracle.Connection):
+    try:
+        # Connection.callTimeout is in milliseconds
+        conn.callTimeout = 20000
+        print(f"Query timeout configured to: 20000 milisecs.")
+    except Exception as err:
+        print(f"Trying to configure query timeout thrown an unknown error: {err}.")
 
 
 cx_Oracle.init_oracle_client(lib_dir=r"C:\oraclexe\instantclient_19_11")
@@ -83,16 +94,25 @@ class CashTransactions(object):
 
 
 with my_conn.cursor() as cursor:
-    # collectionType = my_conn.gettype("ott_cashTransactionsList")
-    # collection = collectionType.newobject()
-    objectType = my_conn.gettype("otr_cashTransactions")
+    collectionType = my_conn.gettype("ott_cashTransactionsList")
     request4 = {'P_FORMAT': 'JSON', 'P_COMPANY': 1, 'P_SOURCE': 'N5', 'P_COUNTRY': 1,
                 'P_ACCOUNT_ID': 123, 'P_DATE_FROM': datetime.datetime(2021, 5, 1),
                 'P_DATE_TO': datetime.datetime(2021, 5, 30), 'P_TRACE_ID': 'ey', 'P_ITEMS_PER_PAGE': 10,
                 'P_PAGE_NUMBER': 1, 'P_TOTAL_PAGES': cursor.var(int), 'P_TOTAL_RECORDS': cursor.var(int),
                 'P_RESPONSE_CODE': cursor.var(int), 'P_MESSAGE': cursor.var(str),
-                'PTT_CASHTRANSACTIONS': cursor.arrayvar(objectType, 100)}
+                'PTT_CASHTRANSACTIONS': cursor.var(collectionType)}
     pl_sql4 = f"begin TRAINING_PACKAGE.PRO_GET_CASH_TRANSACTIONS({declare_parameters(request4)}); end;"
     cursor.execute(pl_sql4, request4)
-    print(f"2.- {request['P_TOTAL_PAGES'].getvalue()}, \n{request['P_TOTAL_RECORDS'].getvalue()}, "
-          f"\n{request['P_RESPONSE_CODE'].getvalue()}, \n{request['P_MESSAGE'].getvalue()}")
+    print(f"3.- {request4['P_TOTAL_PAGES'].getvalue()}, \n{request4['P_TOTAL_RECORDS'].getvalue()}, "
+          f"\n{request4['P_RESPONSE_CODE'].getvalue()}, \n{request4['P_MESSAGE'].getvalue()}")
+    my_collection = request4['PTT_CASHTRANSACTIONS'].getvalue().aslist()
+    print(f"PTT_CASHTRANSACTIONS length: {len(my_collection)}")
+    # Fetch data using reflection (using the metadata from the DB):
+    response = []
+    for elem in my_collection:
+        my_dict = dict()
+        for the_attrib in elem.type.attributes:
+            my_dict[the_attrib.name] = getattr(elem, the_attrib.name)
+        response.append(my_dict)
+    print(response)
+
