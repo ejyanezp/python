@@ -23,7 +23,7 @@ def set_call_timeout(self, conn: cx_Oracle.Connection):
         print(f"Trying to configure query timeout thrown an unknown error: {err}.")
 
 
-cx_Oracle.init_oracle_client(lib_dir=r"C:\oraclexe\instantclient_19_11")
+cx_Oracle.init_oracle_client(lib_dir=r"C:\\oraclexe\\instantclient_19_11")
 engine = create_engine("oracle+cx_oracle://OPENLEGACY:OPENLEGACY@OPENLEGACY:1521/xe",
                        encoding='utf8', pool_size=5, pool_timeout=30)
 # SQL binding by name
