@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Depends
 import cx_Oracle
 import database
-import datetime
+# only for debugging
+import uvicorn
 import models
 
 # Parameters: environment=dev, DB=local
@@ -65,7 +66,7 @@ async def cash_transactions_sp(request: models.TransactionRequest, my_conn: cx_O
                     'P_ACCOUNT_ID': request.accountId,
                     'P_DATE_FROM': request.dateFrom,
                     'P_DATE_TO': request.dateTo,
-                    'P_TRACE_ID': request.traceId,
+                    'P_TRACE_ID': "eyanez",
                     'P_ITEMS_PER_PAGE': request.itemsPerPage,
                     'P_PAGE_NUMBER': request.pageNumber,
                     'P_TOTAL_PAGES': cursor.var(int), 'P_TOTAL_RECORDS': cursor.var(int),
@@ -91,3 +92,9 @@ async def cash_transactions_sp(request: models.TransactionRequest, my_conn: cx_O
         'PTT_CASHTRANSACTIONS': response_collection
     }
     return response
+
+
+# Only for debugging, for production use the uvicorn command line.
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+

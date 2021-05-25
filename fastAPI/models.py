@@ -13,6 +13,5 @@ class TransactionRequest(CcbRequestFixedFields):
     accountId: int
     dateFrom: datetime
     dateTo: datetime
-    traceId: str
     itemsPerPage: int
     pageNumber: int
